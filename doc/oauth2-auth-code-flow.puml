@@ -1,0 +1,33 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/TheIconic/PlantUML-skins/master/src/sequence/sequence.iuml
+
+hide footbox
+actor       "ResourceOwner" as EndUser  order 1
+participant "Client" as Client order 2
+participant AuthorizationServer order 3
+participant ResourceServer order 4
+
+title Oauth2 authorization_code flow
+
+Client --> Client: start with {client_secret}\nhost <color red>/app.com</color>
+
+EndUser -> Client: Open web site
+Client --> Client: validate <color red>access_token</color>
+
+Client --> EndUser: Redirect to AuthorizationServer
+EndUser -> AuthorizationServer: ?scope=...&response_type=<color red>code</color>&<color green>redirect_uri</color>=<color red>/app.com/auth</color>
+
+AuthorizationServer -> EndUser: grant <color red>app.com</color> access to ResourceServer?
+EndUser --> AuthorizationServer: yes, grant access
+
+AuthorizationServer --> EndUser: Redirect to <color green>{redirect_uri}</color> with <color red>authorization_code</color>
+EndUser -> Client: /app.com/auth?code=...
+
+Client -> AuthorizationServer: get_access_token: {authorization_code, client_secret}
+AuthorizationServer -> Client: access_token, refresh_token
+Client --> Client: validate <color red>access_token</color>
+
+Client -> ResourceServer: Authorization: Bearer: {access_token}
+
+Client --> EndUser: data + set_cookie: {access_token}
+@enduml

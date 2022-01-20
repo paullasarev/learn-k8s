@@ -1,0 +1,34 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/TheIconic/PlantUML-skins/master/src/sequence/sequence.iuml
+
+hide footbox
+actor       "EndUser\n(ResourceOwner)" as EndUser  order 1
+participant "RelyingParty\n(Client)" as RelyingParty order 2
+participant OpenIDProvider order 3
+participant ResourceServer order 4
+
+title OpenID Hybrid flow
+
+RelyingParty --> RelyingParty: start with {client_secret}\nhost <color red>/app.com</color>
+
+EndUser -> RelyingParty: Open web site
+RelyingParty --> RelyingParty: validate <color red>access_token</color>
+
+RelyingParty --> EndUser: Redirect to OpenIDProvider
+EndUser -> OpenIDProvider: ?scope=<color red>openid</color>...&response_type=<color red>id_token</color>&<color green>redirect_uri</color>=<color red>/app.com/auth</color>
+
+OpenIDProvider -> EndUser: grant <color red>app.com</color> access to ResourceServer?
+EndUser --> OpenIDProvider: yes, grant access
+
+OpenIDProvider --> EndUser: Redirect to <color green>{redirect_uri}</color> with <color red>id_token</color> and <color red>authorization_code</color>
+EndUser -> RelyingParty: /app.com/auth?id_token=...&code=...
+
+RelyingParty -> OpenIDProvider: get_access_token: {authorization_code, client_secret}
+OpenIDProvider -> RelyingParty: access_token, refresh_token
+RelyingParty --> RelyingParty: validate <color red>id_token</color>
+RelyingParty --> RelyingParty: validate <color red>access_token</color>
+
+RelyingParty -> ResourceServer: Authorization: Bearer: {access_token}
+
+RelyingParty --> EndUser: data + set_cookie: {access_token}
+@enduml

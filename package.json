@@ -1,0 +1,24 @@
+{
+  "name": "learn-k8s",
+  "version": "1.0.0",
+  "description": "learn k8s configuration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "docker build -t learn-k8s/hello .",
+    "start": "node ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paullasarev/learn-k8s.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paullasarev/learn-k8s/issues"
+  },
+  "homepage": "https://github.com/paullasarev/learn-k8s#readme",
+  "dependencies": {
+    "static-server": "^2.2.1"
+  }
+}
